@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+		"name": "Honest Craigslist",
+		"description": "Translates housing ads from Slumlordspeak to plain English",
+		"version": "0.0.0.2",
+		"offline_enabled": true,
+		"permissions": [
+			"management"
+		],
+		"icons": {
+			"16" : "icon16purple.png",
+			"32": "icon32.png",
+			"48" : "icon48.png",
+			"128": "icon128.png"
+		},
+		"browser_action": {
+			"default_icon": "icon16purple.png",
+			"default_popup": "popup.html"
+		 },
+		"content_scripts": [
+			{
+				"matches": [
+					"*://*/*"
+				],
+				"js": [
+					"content.js"
+				],
+				"run_at": "document_end"
+			}
+		]
+	}
