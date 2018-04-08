@@ -192,38 +192,50 @@ const whatToReplace = [
 	[/cable tv/gi, "idiot box"],
 	[/tv/gi, "idiot box"],
 	[/cable/gi, "idiot box"],
-
-
-
 ];
 
-const currentURL = window.location.href;
-if (currentURL.includes("craigslist") || currentURL.includes("gumtree") || currentURL.includes("kijiji")) {
-
-	let content = document.querySelector(".content");
-	if (content === null) {
-		content = document.querySelector(".body")
+chrome.storage.local.get("hcl", function(result) {
+	if (result.hcl== "true") {
+		run();
 	}
-
-	if (content === null) {
-		content = document.querySelector("body")
-	}
-
-	const parent = content.parentNode;
-	const placeholder = document.createElement('div');
-
-	// remove it from the DOM and replace it with a placeholder
-	parent.replaceChild(placeholder, content);
 	
-	let node;
-
-	const walk=document.createTreeWalker(content,NodeFilter.SHOW_TEXT,null,false);
-	while((node=walk.nextNode())) {
-		for (let [regEx, replacement] of whatToReplace) {
-			node.nodeValue = node.nodeValue.replace(regEx, replacement);
-		}
+	if (result.hcl== null) {
+		chrome.storage.local.set({"hcl": "true"}, function() {
+			run();
+		  });
 	}
+  });
 
-	// swap our altered element back into the DOM
-	parent.replaceChild(content, placeholder);
+function run() {
+
+	const currentURL = window.location.href;
+	if (currentURL.includes("craigslist") || currentURL.includes("gumtree") || currentURL.includes("kijiji")) {
+
+		let content = document.querySelector(".content");
+		if (content === null) {
+			content = document.querySelector(".body")
+		}
+
+		if (content === null) {
+			content = document.querySelector("body")
+		}
+
+		const parent = content.parentNode;
+		const placeholder = document.createElement('div');
+
+		// remove it from the DOM and replace it with a placeholder
+		parent.replaceChild(placeholder, content);
+		
+		let node;
+
+		const walk=document.createTreeWalker(content,NodeFilter.SHOW_TEXT,null,false);
+		while((node=walk.nextNode())) {
+			for (let [regEx, replacement] of whatToReplace) {
+				node.nodeValue = node.nodeValue.replace(regEx, replacement);
+			}
+		}
+
+		// swap our altered element back into the DOM
+		parent.replaceChild(content, placeholder);
+	}
 }
